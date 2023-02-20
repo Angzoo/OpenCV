@@ -1,0 +1,70 @@
+//효과 : 자막, 배경 제거
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <string.h>
+using namespace cv;
+using namespace std;
+
+int main() {
+	Mat img_Frame;
+	Mat grey_Frame;
+	Mat background, result, foregroundMask, foregroundImg;
+	//영상 읽기
+	VideoCapture cap("C:\\zoo\\openCV\\data\\road.mp4");
+	if (!cap.isOpened()) {
+		cout << "파일을 찾을 수 없습니다.";
+	}
+	bool ret = cap.read(img_Frame);
+	if (!ret) {
+		cout << "캡쳐 실패";
+		return -1;
+	}
+
+	//저장
+	int codec = VideoWriter::fourcc('F', 'M', 'P', '4');
+	double fps = 10.0;
+	VideoWriter writer("C:\\zoo\\openCV\\data\\Quiz.mp4", codec, fps, img_Frame.size(), 0);
+
+	cap >> background;
+	cvtColor(background, background, COLOR_BGR2GRAY);
+
+
+	while (1) {
+		//자막넣기
+		Point text_org(100, 500); //위치
+		Scalar text_color(255, 0, 0); //색상
+
+		int font_face = FONT_HERSHEY_SIMPLEX; //폰트
+		double font_scale = 2.0; //간격?
+		int thickness = 3; //두께	
+
+		if (cap.grab() == 0) return -1;
+		cap.retrieve(img_Frame);
+		cvtColor(img_Frame, grey_Frame, COLOR_BGR2GRAY);
+
+		//배경 제거
+		absdiff(background, grey_Frame, foregroundMask);
+		threshold(foregroundMask, foregroundMask, 50, 255, THRESH_BINARY);
+
+		bool ret = cap.read(img_Frame);
+		if (!ret) {
+			cout << "파일 읽기 실패" << endl;
+			break;
+		}
+		putText(foregroundMask, "Let' go!", text_org, font_face, font_scale, text_color, thickness);
+
+		//저장할 파일
+		writer.write(foregroundMask);
+
+		imshow("color", img_Frame);
+		imshow("foregroundMask", foregroundMask);
+		imshow("convert", grey_Frame);
+
+		int key = waitKey(1);
+		if (key == 27)
+			break;
+	}
+
+	cap.release();
+	writer.release();
+}

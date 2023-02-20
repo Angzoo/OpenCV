@@ -1,0 +1,64 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+
+
+using namespace cv;
+using namespace std;
+
+
+int main()
+{
+
+	Mat img_frame;
+
+
+	VideoCapture cap("C:\\mobleWork\\data\\vtest.avi");
+	if (!cap.isOpened())
+	{
+		cout << "카메라를 열 수 없습니다." << endl;
+		return -1;
+	}
+
+	bool ret = cap.read(img_frame);
+	if (!ret)
+	{
+		cout << "캡쳐 실패" << endl;
+		return -1;
+	}
+
+	// https://thebook.io/006939/ch04/01/04-02/
+	int codec = VideoWriter::fourcc('F', 'M', 'P', '4');
+	double fps = 10.0;
+	VideoWriter write("C:\\mobleWork\\data\\out.mp4", codec, fps, img_frame.size(), 0);
+
+	while(1)
+	{
+
+		bool ret = cap.read(img_frame);
+		if (!ret)
+		{
+			cout << "캡쳐 실패" << endl;
+			break;
+		}
+
+
+		imshow("Color", img_frame);
+
+		Mat img_gray;
+		cvtColor(img_frame, img_gray, COLOR_BGR2GRAY);
+
+		write.write(img_gray);
+
+		imshow("Gray", img_gray);
+
+		int key = waitKey(1);
+		if (key == 27)
+			break;
+	}
+
+    
+	cap.release();
+	write.release();
+
+	return 0;
+}

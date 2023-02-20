@@ -1,0 +1,6 @@
+배치파일 : 내가 생성한 실행파일을 순서대로 실행시킬 수 있다 
+
+ex) convert.bat
+openCV.exe C:\Temp\1a6a7acd1762602004c1d67922fb444b.jpg C:\Temp\textoutput.jpg //생성exe파일  오픈할파일  저장할파일
+tesseract -c preserve_interword_spaces=1 1a6a7acd1762602004c1d67922fb444b.jpg stdout -l kor+eng --psm 4 파일에 있는 텍스트 cmd에 출력
+tesseract -c preserve_interword_spaces=1 1a6a7acd1762602004c1d67922fb444b.jpg stdout -l kor+eng --psm 4 > out.txt 파일에 있는 텍스트를 저장

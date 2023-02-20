@@ -1,0 +1,58 @@
+#include <iostream>
+using namespace std;
+#define ROW 4
+#define COL 5
+#define WIDTH COL
+#define HIGHT ROW
+
+char arr[ROW][COL] = { 0x00, };//0x00 16진수 = 0
+char arrTrans[WIDTH][HIGHT] = { 0x00, }; //arr을 90도 회전하기 위해 빈배열 생성
+void printData(const char* arr, const int row, const int col) {
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			cout << *(arr + i * col + j);
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+void func1(){
+	memset(arr, 'o', sizeof(arr)); //memset(메모리주소(시작주소), 채울값, 메모리 크기) => 메모리에 지정된 값으로 채워주는 기능 == 초기화
+}
+void func2() {
+	memset(arr, 'o', sizeof(arr));
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			arr[i][j] = 'x';
+		}
+	}
+}
+void func3() {
+	for (int i = 0; i < ROW; i++) {
+		for (int j = 0; j < COL; j++) {
+			arr[i][j] = (arr[i][j] == 'o' ? 'x' : 'o'); //삼항연산자
+		}
+	}
+}
+void func4() {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 5; j++) {
+			arrTrans[j][4 - i - 1] = arr[i][j];
+		}
+	}
+}
+int main() {
+	func1();//이미지를 읽어서 메모리 출력
+	printData((const char*)arr, ROW, COL);
+
+	func2();//이미지 색상 변경
+	printData((const char*)arr, ROW, COL);
+;
+	func3();//이미지 반전
+	printData((const char*)arr, ROW, COL);
+
+	func4();//이미지 90도 회전
+	printData((const char*)arrTrans, WIDTH, HIGHT);
+
+	return 0;
+}

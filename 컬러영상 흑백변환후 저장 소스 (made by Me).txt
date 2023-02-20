@@ -1,0 +1,65 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <string.h>
+using namespace cv;
+using namespace std;
+
+int main() {
+	Mat img_frame;
+	Mat blackImage;
+
+	VideoCapture cap("C:\\zoo\\openCV\\data\\vtest.avi");
+	if (!cap.isOpened()){
+		cout << "카메라를 열 수 없습니다." << endl;
+		return -1;
+	}
+
+
+
+	while (1){
+		bool ret = cap.read(img_frame);
+		if (!ret){
+			cout << "캡쳐 실패" << endl;
+			break;
+		}
+		imshow("Color", img_frame);
+
+		//컬러영상 -> 흑백영상으로...
+		Mat img_color = imread("C:\\zoo\\openCV\\data\\lena.png", IMREAD_COLOR);
+		cvtColor(img_frame, blackImage, COLOR_BGR2GRAY);
+		imshow("GrayColor", blackImage);
+
+		int key = waitKey(1);
+		if (key == 27)
+			break;
+	}
+
+	//변환된 영상 저장하기
+	int codec = VideoWriter::fourcc('F', 'M', 'P', '4');
+	double fps = 30.0;
+	VideoWriter writer("C:\\zoo\\openCV\\data\\out.mp4", codec, fps, img_frame.size(), 0);
+
+	if (!writer.isOpened()) {
+		cout << "동영상 파일을 준비할 수 없습니다." << endl;
+		return -1;
+	}
+	while (1) {
+		bool ret = cap.read(img_frame);
+		if (!ret) {
+			cout << "캡처 실패" << endl;
+			break;
+		}
+		cvtColor(img_frame, blackImage, COLOR_BGR2GRAY);
+
+		writer.write(blackImage);
+
+		imshow("Gray", blackImage);
+
+		int key = waitKey(1);
+		if (key == 27)
+			break;
+	}
+	cap.release();
+	writer.release();
+	return 0;
+}
